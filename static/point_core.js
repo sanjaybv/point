@@ -4,7 +4,7 @@ function init() {
 
 	if ("WebSocket" in window) {
 
-		ws = new WebSocket("ws://sanjay-2244:8090/pointws");
+		ws = new WebSocket("ws://localhost:8082/");
 		
 		ws.onopen = function() {
 			console.log("point: ws opened");

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"sanjay/point/cserver"
-	"sanjay/point/pserver"
+	"github.com/sanjaybv/point/cserver"
+	"github.com/sanjaybv/point/pserver"
 
 	"html/template"
 	"log"
@@ -14,14 +14,12 @@ func main() {
 	pserver.InitPointService()
 	cserver.InitChatService()
 
-	http.Handle("/static/", http.StripPrefix(
-		"/static/",
+	http.Handle("/static/", http.StripPrefix("/static/",
 		http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/", hPoint)
 
-	log.Println("starting Point")
-
-	log.Panic(http.ListenAndServe(":8092", nil))
+	log.Println("starting Point on port 8080")
+	log.Panic(http.ListenAndServe(":8080", nil))
 }
 
 func hPoint(w http.ResponseWriter, r *http.Request) {

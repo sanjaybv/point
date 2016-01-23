@@ -1,7 +1,7 @@
 package pserver
 
 import (
-	"sanjay/point/comm"
+	"github.com/sanjaybv/point/comm"
 
 	"log"
 	"sync/atomic"
@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	PORT = "8080"
+	PORT = "8082"
 )
 
 var (
@@ -20,7 +20,7 @@ func InitPointService() {
 
 	comm.NewCommService("pointws", ":"+PORT, newClient)
 
-	log.Println("pserver: started...")
+	log.Println("pserver: started on 8082")
 
 	go func() {
 		intTime := time.Tick(time.Second)

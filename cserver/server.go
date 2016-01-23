@@ -1,14 +1,14 @@
 package cserver
 
 import (
-	"sanjay/point/comm"
+	"github.com/sanjaybv/point/comm"
 
 	"log"
 	"time"
 )
 
 const (
-	PORT = "8080"
+	PORT = "8081"
 	//TIME_FORMAT = "Jan 2, 2006 at 3:04pm (MST)"
 	TIME_FORMAT = "3:04:05pm"
 )
@@ -16,8 +16,7 @@ const (
 func InitChatService() {
 
 	comm.NewCommService("chat", ":"+PORT, newClient)
-
-	log.Println("cserver: started...")
+	log.Println("cserver: started on port 8081")
 }
 
 func newClient(c *comm.Client) {
@@ -35,11 +34,10 @@ func newClient(c *comm.Client) {
 		}
 
 		// Process the message
-
+		// preventing people from spamming
 		if time.Now().Sub(lastTime) < time.Duration(500*time.Millisecond) {
 			continue
 		}
-
 		msg["time"] = time.Now().Format(TIME_FORMAT)
 
 		// Broadcast the message

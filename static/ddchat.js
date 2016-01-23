@@ -15,7 +15,7 @@ function makeConn() {
 
 		if ("WebSocket" in window) {
 
-				ws = new WebSocket("ws://sanjay-2244:8090/chat");
+				ws = new WebSocket("ws://localhost:8081/");
 				ws.onopen = function() {
 						console.log("ddchat: ws opened");
 				}

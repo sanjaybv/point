@@ -16,6 +16,7 @@ import (
 )
 
 type CommService struct {
+	server      *http.Server
 	funcHandler func(*Client)
 	conns       *list.List
 }
@@ -27,15 +28,29 @@ type Client struct {
 
 func NewCommService(url, port string, funcHandler func(*Client)) {
 
-	cs := CommService{funcHandler, list.New()}
-
-	http.HandleFunc("/"+url,
-		func(w http.ResponseWriter, req *http.Request) {
-			s := ws.Server{
-				Handler: ws.Handler(
-					cs.newClientsHandler)}
-			s.ServeHTTP(w, req)
+	cs := CommService{
+		nil,
+		funcHandler,
+		list.New(),
+	}
+	cs.setServer(
+		&http.Server{
+			Addr:    port,
+			Handler: ws.Handler(cs.newClientsHandler),
 		})
+	cs.start()
+}
+
+func (cs *CommService) start() {
+
+	go func() {
+		log.Panic(cs.server.ListenAndServe())
+	}()
+}
+
+func (cs *CommService) setServer(s *http.Server) {
+
+	cs.server = s
 }
 
 func (cs *CommService) newClientsHandler(conn *ws.Conn) {
