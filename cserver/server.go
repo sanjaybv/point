@@ -15,7 +15,7 @@ const (
 
 func InitChatService() {
 
-	comm.NewCommService("chat", ":"+PORT, newClient)
+	comm.NewCommService(":"+PORT, newClient)
 	log.Println("cserver: started on port 8081")
 }
 

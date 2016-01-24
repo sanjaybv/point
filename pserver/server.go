@@ -18,7 +18,7 @@ var (
 
 func InitPointService() {
 
-	comm.NewCommService("pointws", ":"+PORT, newClient)
+	comm.NewCommService(":"+PORT, newClient)
 
 	log.Println("pserver: started on 8082")
 
