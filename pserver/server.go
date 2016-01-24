@@ -1,7 +1,7 @@
 package pserver
 
 import (
-	"github.com/sanjaybv/comm"
+	"github.com/sanjaybv/point/Godeps/_workspace/src/github.com/sanjaybv/comm"
 
 	"log"
 	"sync/atomic"

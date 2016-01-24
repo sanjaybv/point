@@ -1,0 +1,17 @@
+{
+	"ImportPath": "github.com/sanjaybv/point",
+	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/sanjaybv/comm",
+			"Rev": "ad0d6b7ca2762b98f419900b26de948791d531db"
+		},
+		{
+			"ImportPath": "golang.org/x/net/websocket",
+			"Rev": "b4e17d61b15679caf2335da776c614169a1b4643"
+		}
+	]
+}
