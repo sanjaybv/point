@@ -1,7 +1,7 @@
 package cserver
 
 import (
-	"github.com/sanjaybv/point/comm"
+	"github.com/sanjaybv/comm"
 
 	"log"
 	"time"

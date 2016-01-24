@@ -1,7 +1,7 @@
 package pserver
 
 import (
-	"github.com/sanjaybv/point/comm"
+	"github.com/sanjaybv/comm"
 
 	"log"
 	"sync/atomic"
