@@ -24,7 +24,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("$PORT must be set")
+		port = "8080"
 	}
 
 	// increase security on this
@@ -36,6 +36,7 @@ func main() {
 	broadcast = make(chan []byte)
 	go broadcastWorker(broadcast)
 
+	log.Println("starting server on :" + port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Println(err)
 	}
@@ -57,6 +58,7 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
 
 	// send pings to keep the connection alive
 	go func() {
+		//log.Println("pingWorker running")
 		for {
 			if _, ok := connPool[connID]; ok {
 				if err := conn.WriteControl(
