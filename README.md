@@ -11,7 +11,15 @@ CSS framework used here is Semantic UI.
 
 ## Installation
 
-1. Install golang. [https://golang.org/doc/install](https://golang.org/doc/install) 
-2. In a terminal, run the command `go get github.com/sanjaybv/point`.
-3. Once installed, you should be able to run the server by running the command 
-`cd $GOPATH/src/github.com/sanjaybv/point; point`.
+Install golang. 
+    [https://golang.org/doc/install](https://golang.org/doc/install) 
+  
+In a terminal, run 
+
+    go get github.com/sanjaybv/point
+
+## Running
+
+Once installed, you should be able to run the server by running 
+
+    cd $GOPATH/src/github.com/sanjaybv/point; point
