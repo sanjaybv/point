@@ -9,9 +9,11 @@ body {
 .hiddensubmit {
 		display:none;
 }
+/*
 .metadata {
 		float: right;
 }
+*/
 .author {
 		font-weight: bold;
 }
@@ -19,6 +21,7 @@ body {
 		vertical-align: middle;
 }
 
+/*
 ::-webkit-scrollbar {
 		width: 12px;
 }
@@ -33,3 +36,4 @@ body {
 		background: #54a8f7;
 		margin: 5px;
 }
+*/

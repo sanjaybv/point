@@ -53,10 +53,12 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
 	connPool[connID] = conn
 	defer delete(connPool, connID)
 
+	log.Println("client", "new", connID, r.RemoteAddr)
+
+	// send pings to keep the connection alive
 	go func() {
 		for {
 			if _, ok := connPool[connID]; ok {
-				log.Println("pingning")
 				if err := conn.WriteControl(
 					ws.PingMessage, nil, time.Now().Add(5*time.Second)); err != nil {
 					log.Println(err)
@@ -78,7 +80,7 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	conn.Close()
-	log.Println("Client unsubscribed")
+	log.Println("client", "exit", connID)
 }
 
 func broadcastWorker(broadcast chan []byte) {
@@ -86,7 +88,7 @@ func broadcastWorker(broadcast chan []byte) {
 
 	for {
 		data := <-broadcast
-		log.Println(string(data))
+		//log.Println(string(data))
 		for _, conn := range connPool {
 			if err := conn.WriteMessage(ws.TextMessage, data); err != nil {
 				log.Println(err)

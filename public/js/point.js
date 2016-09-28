@@ -25,6 +25,17 @@ function makeConn() {
             console.log("ddchat: message recieved:");
             //console.log(msg);
 
+            if (msg["type"] == "line") {
+
+                fromX = parseInt(msg.fromX);
+                fromY = parseInt(msg.fromY);
+                toX = parseInt(msg.toX);
+                toY = parseInt(msg.toY);
+
+                drawLine(fromX, fromY, toX, toY);
+                return
+            }
+
             t1[3] = msg.username;
             var currentdate = new Date(); 
             var datetime = currentdate.getDate() + "/"
@@ -58,6 +69,7 @@ function makeConn() {
         var msg = {}
         msg["username"] = $("#username").val();
         msg["body"] = $("#body").val();
+        msg["type"] = "chat";
         $("#body").val("");
         $("#body").focus();
 
@@ -69,50 +81,8 @@ function makeConn() {
         sendFunc();
         return false;
     });
-    /*
-       $("#msgform").keydown(function(event) {
-       if (event.keyCode == 13) {
-       sendFunc();
-       return false;
-       }
-       });
-       */
 
-}
-
-function init() {
-
-    var ws;
-
-    if ("WebSocket" in window) {
-
-        ws = new WebSocket("ws://localhost:8082/");
-
-        ws.onopen = function() {
-            console.log("point: ws opened");
-        }
-
-        ws.onmessage = function(evt) {
-
-            var msg = JSON.parse(evt.data);
-            console.log("point: message recieved:");
-
-            fromX = parseInt(msg.fromX);
-            fromY = parseInt(msg.fromY);
-            toX = parseInt(msg.toX);
-            toY = parseInt(msg.toY);
-
-            drawLine(fromX, fromY, toX, toY);
-        }
-
-        ws.onclose = function(e) {
-            console.log("point: connection closed");
-        }
-
-    } else {
-        alert("WebSocket is not supported!");
-    }
-
+    // drawing stuff
     var qPt = $("#pointspace");
 
     qPt.attr("width", $("#sketch").width());
@@ -146,6 +116,7 @@ function init() {
     var onPaint = function() {
         drawLine(mouse.ox, mouse.oy, mouse.x, mouse.y);
         ws.send(JSON.stringify({
+            "type": "line",
             fromX: mouse.ox,
             fromY: mouse.oy,
             toX: mouse.x,
@@ -169,4 +140,43 @@ function init() {
         ctx.lineCap = 'round';
         ctx.strokeStyle = 'black';
     });
+
+
+    /*
+       $("#msgform").keydown(function(event) {
+       if (event.keyCode == 13) {
+       sendFunc();
+       return false;
+       }
+       });
+       */
+
+}
+
+function init() {
+
+    var ws;
+
+    if ("WebSocket" in window) {
+
+        ws = new WebSocket("ws://localhost:8082/");
+
+        ws.onopen = function() {
+            console.log("point: ws opened");
+        }
+
+        ws.onmessage = function(evt) {
+
+            var msg = JSON.parse(evt.data);
+            console.log("point: message recieved:");
+
+        }
+
+        ws.onclose = function(e) {
+            console.log("point: connection closed");
+        }
+
+    } else {
+        alert("WebSocket is not supported!");
+    }
 }

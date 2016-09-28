@@ -6,6 +6,7 @@ body {
 
 #sketch {
 	width: 100%;
+    margin-top: 20px;
 }
 
 #pointspace {
@@ -15,6 +16,7 @@ body {
 	border-style: solid;
 }
 
+/*
 ::-webkit-scrollbar {
 		width: 12px;
 }
@@ -29,3 +31,4 @@ body {
 		background: #54a8f7;
 		margin: 5px;
 }
+*/
