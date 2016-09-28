@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 var upgrader = ws.Upgrader{
@@ -51,6 +52,21 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
 	connID := uuid.NewV4().String()
 	connPool[connID] = conn
 	defer delete(connPool, connID)
+
+	go func() {
+		for {
+			if _, ok := connPool[connID]; ok {
+				log.Println("pingning")
+				if err := conn.WriteControl(
+					ws.PingMessage, nil, time.Now().Add(5*time.Second)); err != nil {
+					log.Println(err)
+				}
+				time.Sleep(5 * time.Second)
+			} else {
+				break
+			}
+		}
+	}()
 
 	for {
 		_, data, err := conn.ReadMessage()
