@@ -1,38 +1,41 @@
 package main
 
 import (
-	ws "github.com/gorilla/websocket"
-	"github.com/satori/go.uuid"
-
-	//"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	ws "github.com/gorilla/websocket"
+	"github.com/satori/go.uuid"
+	"github.com/streamrail/concurrent-map"
 )
 
+const defaultPort = "8080"
+
+// upgrader is used to upgrade HTTP connections to Websocket
 var upgrader = ws.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
 
 var broadcast chan []byte
-var connPool map[string]*ws.Conn
+var connPool cmap.ConcurrentMap
 
 func main() {
 
+	// for heroku support
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = defaultPort
 	}
 
-	// increase security on this
 	http.Handle("/", http.FileServer(http.Dir("public")))
 	http.HandleFunc("/index.html", index)
 	http.HandleFunc("/ws", handleWs)
 
-	connPool = make(map[string]*ws.Conn)
+	connPool = cmap.New()
 	broadcast = make(chan []byte)
 	go broadcastWorker(broadcast)
 
@@ -44,6 +47,7 @@ func main() {
 
 func handleWs(w http.ResponseWriter, r *http.Request) {
 
+	// upgrade HTTP to Websocket
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -51,16 +55,15 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	connID := uuid.NewV4().String()
-	connPool[connID] = conn
-	defer delete(connPool, connID)
+	connPool.Set(connID, conn)
+	defer connPool.Remove(connID)
 
 	log.Println("client", "new", connID, r.RemoteAddr)
 
-	// send pings to keep the connection alive
+	// PingWorker send pings to keep the connection alive
 	go func() {
-		//log.Println("pingWorker running")
 		for {
-			if _, ok := connPool[connID]; ok {
+			if _, ok := connPool.Get(connID); ok {
 				if err := conn.WriteControl(
 					ws.PingMessage, nil, time.Now().Add(5*time.Second)); err != nil {
 					log.Println(err)
@@ -72,6 +75,7 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
+	// read messages and send it to broadcast channel
 	for {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
@@ -85,16 +89,22 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
 	log.Println("client", "exit", connID)
 }
 
+// BroadcastWorker sends the message to all connections in connPool
+// in its own goroutine.
 func broadcastWorker(broadcast chan []byte) {
 	log.Println("broadcastWorker running")
 
 	for {
+		// get the data
 		data := <-broadcast
-		//log.Println(string(data))
-		for _, conn := range connPool {
-			if err := conn.WriteMessage(ws.TextMessage, data); err != nil {
-				log.Println(err)
-			}
+
+		// broadcast the data
+		for connTuple := range connPool.IterBuffered() {
+			go func(conn *ws.Conn, data []byte) {
+				if err := conn.WriteMessage(ws.TextMessage, data); err != nil {
+					log.Println(err)
+				}
+			}(connTuple.Val.(*ws.Conn), data)
 		}
 	}
 }
