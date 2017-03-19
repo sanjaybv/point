@@ -5,7 +5,7 @@ import (
 	"time"
 
 	ws "github.com/gorilla/websocket"
-	"github.com/streamrail/concurrent-map"
+	"github.com/orcaman/concurrent-map"
 )
 
 var connPool cmap.ConcurrentMap
