@@ -5,7 +5,6 @@ import (
 	"time"
 
 	ws "github.com/gorilla/websocket"
-	uuid "github.com/satori/go.uuid"
 	"github.com/streamrail/concurrent-map"
 )
 
@@ -23,14 +22,14 @@ type Client struct {
 func NewClient(c *ws.Conn) *Client {
 	client := &Client{
 		conn:      c,
-		connID:    uuid.NewV4().String(),
+		connID:    c.RemoteAddr().String(),
 		writeChan: make(chan []byte),
 	}
 	go client.pingWorker()
 	go client.writeWorker()
 	go client.broadcastWorker()
 
-	log.Println("client", "new", client.connID, client.conn.RemoteAddr())
+	log.Println("client", "new", client.connID)
 	connPool.Set(client.connID, client)
 
 	return client
