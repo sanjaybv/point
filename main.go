@@ -7,7 +7,6 @@ import (
 	"os"
 
 	ws "github.com/gorilla/websocket"
-	"github.com/streamrail/concurrent-map"
 )
 
 const defaultPort = "8080"
@@ -29,8 +28,6 @@ func main() {
 	http.Handle("/", http.FileServer(http.Dir("public")))
 	http.HandleFunc("/index.html", index)
 	http.HandleFunc("/ws", handleWs)
-
-	connPool = cmap.New()
 
 	log.Println("starting server on :" + port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {

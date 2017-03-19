@@ -10,6 +10,10 @@ import (
 
 var connPool cmap.ConcurrentMap
 
+func init() {
+	connPool = cmap.New()
+}
+
 // Client represents a client
 type Client struct {
 	conn   *ws.Conn
